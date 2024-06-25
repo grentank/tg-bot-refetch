@@ -13,8 +13,7 @@ const appState = {
   timeout: 0,
 };
 
-bot.start(async (ctx) => {
-  ctx.reply('Привет! Запускаю регулярные запросы на Гонку Героев');
+async function run(ctx) {
   while (appState.WHILE_FLAG) {
     if (appState.errors > 10) {
       appState.WHILE_FLAG = false;
@@ -30,6 +29,7 @@ bot.start(async (ctx) => {
         ctx.reply(`Появилось место! Свободно заявок: ${athletes}`);
         if (appState.requestsAfterSuccess >= 14) {
           appState.WHILE_FLAG = false;
+          return ctx.reply('Слишком много ответов с успешными заявками! Завершение бота');
         }
       }
     } catch (error) {
@@ -38,6 +38,11 @@ bot.start(async (ctx) => {
       appState.errors++;
     }
   }
+}
+
+bot.start((ctx) => {
+  ctx.reply('Привет! Запускаю регулярные запросы на Гонку Героев');
+  run(ctx);
 });
 bot.help((ctx) => {
   ctx.reply(
